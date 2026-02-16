@@ -63,13 +63,32 @@ app.post('/api/workouts', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    // Validate data types and ranges
+    const parsedSets = parseInt(sets);
+    const parsedReps = parseInt(reps);
+    const parsedWeight = weight ? parseFloat(weight) : null;
+
+    if (isNaN(parsedSets) || parsedSets <= 0) {
+      return res.status(400).json({ error: 'Sets must be a positive integer' });
+    }
+    if (isNaN(parsedReps) || parsedReps <= 0) {
+      return res.status(400).json({ error: 'Reps must be a positive integer' });
+    }
+    if (weight && (isNaN(parsedWeight) || parsedWeight <= 0)) {
+      return res.status(400).json({ error: 'Weight must be a positive number' });
+    }
+    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return res.status(400).json({ error: 'Date must be in YYYY-MM-DD format' });
+    }
+
     const workouts = await readWorkouts();
+    // Generate more reliable unique ID with timestamp and random component
     const newWorkout = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       exercise,
-      sets: parseInt(sets),
-      reps: parseInt(reps),
-      weight: weight ? parseFloat(weight) : null,
+      sets: parsedSets,
+      reps: parsedReps,
+      weight: parsedWeight,
       date,
       notes: notes || '',
       createdAt: new Date().toISOString()

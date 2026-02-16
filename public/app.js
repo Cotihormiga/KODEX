@@ -19,9 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event listeners
     workoutForm.addEventListener('submit', handleSubmit);
     sortSelect.addEventListener('change', handleSort);
-    
-    // Set today's date as default
-    document.getElementById('date').valueAsDate = new Date();
 });
 
 // Initialize form
